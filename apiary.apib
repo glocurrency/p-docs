@@ -3,11 +3,28 @@ HOST: https://mw.glocurrency.com/
 
 # Glo Currency | Project P
 
+## Authentication
+
+Every API call needs to be authenticated. Valid bearer token can be obtained by email.
+
+## Status codes
+
+Generally in our API there are three types of status codes used:
+
+- `200` status code means that the request was accepted.
+- `422` status code is used whenever there was a validation error with the request. In case of validation errors, they are returned in the `errors` field.
+- `401` status code means that you are using invalid authorization header.
+
+in addition to the status code we also send `"status"` field in every json response.
+
+- `SUCCESS` means there was no issues with your request.
+- `FAIL` is used when there was any kind of error.
+
 # Country [/api/v1/r1/countries]
 
 ## Get available countries. [GET]
-Return available countries for the current user. 
-Live and Sandbox users can have different countries available.
+First you should obtain the list of available countries for your current authenticated user. The list of countries can be updated in any point of time.
+Live and Sandbox users have different countries available.
 
 + Request (application/json)
     + Headers
@@ -44,8 +61,7 @@ Live and Sandbox users can have different countries available.
 # Transaction [/api/v1/r1/transaction]
 
 ## Get payout transactions. [GET /api/v1/r1/{country_code}/transactions]
-Get all transactions that have been assigned for
-payout.
+Get all transactions that have been assigned for payout.
 
 + Parameters
     + country_code: `CM` (string, required) - Country code.
@@ -63,14 +79,70 @@ payout.
                 "status": "SUCCESS",
                 "transactions": [
                     {
+                        "transaction_id": "GC1234567890",
                         "status": "HQ_OK",
-                        "transaction_id": "GC1234567890"
+                        "transaction_type": "Account",
+                        "source_of_income": "SALARY",
+                        
+                        "purpose": "FAMILY SUPPORT",
+                        "creation_date": "2020-12-11 16:11:55+00",
+                        "delivery_date": "2020-12-11 16:11:00+00",
+                        "processing_bank": "BANK-000",
+                        
+                        "collection_point": "LA POSTE (ANYWHERE PAY OUT)",
+                        "collection_point_bank": "BANKNAME",
+                        "collection_point_code": "ANYWHERE PAY OUT",
+                        "collection_pin": "123456789",
+                        
+                        "beneficiary_id": "100",
+                        "beneficiary_name": "JOHN DOE",
+                        "beneficiary_firstname": "JOHN",
+                        "beneficiary_lastname": "DOE",
+                        "beneficiary_postcode": "",
+                        "beneficiary_city": "GLOVILLE",
+                        "beneficiary_state": "",
+                        "beneficiary_address_1": "EXAMPLE STREET",
+                        "beneficiary_address_2": "",
+                        "beneficiary_address_3": "",
+                        "beneficiary_mobile": "+123456789",
+                        "beneficiary_telephone": "+123456789",
+                        "beneficiary_email": "",
+                        
+                        
+                        "remitter_id": "1",
+                        "remitter_name": "JANE DOE",
+                        "remitter_firstname": "JANE",
+                        "remitter_middlename": "",
+                        "remitter_lastname": "DOE",
+                        "remitter_address": "134 EXAMPLE STREET, GREAT PARK, N/A, 123 ABC, UNITED KINDGOM",
+                        "remitter_type": "registered",
+                        "remitter_orgtype": "Individual",
+                        "remitter_telephone": "+123456789",
+                        "remitter_mobile": "+123456789",
+                        "remitter_beneficiary_relation": "FAMILY",
+                        
+                        "send_country": "GB",
+                        "send_currency": "GBP",
+                        "receive_country": "SN",
+                        "receive_currency": "XOF",
+                        "receive_amount": "1000.05",
+                        "receive_amount_after_bank_charges": "1000.05"
                     }
                 ]
             }
 
 ## Get transaction details. [GET /api/v1/r1/{country_code}/transaction/{transaction_id}]
 Get details of a single transaction.
+
+Transaction can have following statuses:
+- `HQ_OK` - just created
+- `SENT_FOR_PAY` - accepted for payment
+- `PROCESSED` - processed by bank
+
+Transaction can have following types:
+- `Account` - bank account transfer
+- `Cash Collection` - cash collection
+- `Mobile Transfer` - mobile transfer
 
 + Parameters
     + country_code: `CM` (string, required) - Country code.
@@ -88,14 +160,62 @@ Get details of a single transaction.
             {
                 "status": "SUCCESS",
                 "transaction": {
+                    "transaction_id": "GC1234567890",
                     "status": "HQ_OK",
-                    "transaction_id": "GC1234567890"
+                    "transaction_type": "Account",
+                    "source_of_income": "SALARY",
+                    
+                    "purpose": "FAMILY SUPPORT",
+                    "creation_date": "2020-12-11 16:11:55+00",
+                    "delivery_date": "2020-12-11 16:11:00+00",
+                    "processing_bank": "BANK-000",
+                    
+                    "collection_point": "LA POSTE (ANYWHERE PAY OUT)",
+                    "collection_point_bank": "BANKNAME",
+                    "collection_point_code": "ANYWHERE PAY OUT",
+                    "collection_pin": "123456789",
+                    
+                    "beneficiary_id": "100",
+                    "beneficiary_name": "JOHN DOE",
+                    "beneficiary_firstname": "JOHN",
+                    "beneficiary_lastname": "DOE",
+                    "beneficiary_postcode": "",
+                    "beneficiary_city": "GLOVILLE",
+                    "beneficiary_state": "",
+                    "beneficiary_address_1": "EXAMPLE STREET",
+                    "beneficiary_address_2": "",
+                    "beneficiary_address_3": "",
+                    "beneficiary_mobile": "+123456789",
+                    "beneficiary_telephone": "+123456789",
+                    "beneficiary_email": "",
+                    
+                    
+                    "remitter_id": "1",
+                    "remitter_name": "JANE DOE",
+                    "remitter_firstname": "JANE",
+                    "remitter_middlename": "",
+                    "remitter_lastname": "DOE",
+                    "remitter_address": "134 EXAMPLE STREET, GREAT PARK, N/A, 123 ABC, UNITED KINDGOM",
+                    "remitter_type": "registered",
+                    "remitter_orgtype": "Individual",
+                    "remitter_telephone": "+123456789",
+                    "remitter_mobile": "+123456789",
+                    "remitter_beneficiary_relation": "FAMILY",
+                    
+                    "send_country": "GB",
+                    "send_currency": "GBP",
+                    "receive_country": "SN",
+                    "receive_currency": "XOF",
+                    "receive_amount": "1000.05",
+                    "receive_amount_after_bank_charges": "1000.05"
                 }
             }
 
             
 ## Accept payout transaction. [POST /api/v1/r1/{country_code}/transaction/{transaction_id}/accept]
-Accept transaction so that the Bank/Agent can pay them out to beneficiaries.
+Accept transaction so that the Bank/Agent can pay them out to beneficiaries. 
+
+> Transaction can be accepted only once.
 
 + Parameters
     + country_code: `CM` (string, required) - Country code.
@@ -112,12 +232,14 @@ Accept transaction so that the Bank/Agent can pay them out to beneficiaries.
 
             {
                 "status": "SUCCESS",
-                "transaction_id": "GC1234567890"
+                "message": "Transaction accepted"
             }
             
 ## Process payout transaction. [POST /api/v1/r1/{country_code}/transaction/{transaction_id}/process]
 Inform the system that a transaction that was accepted by the Bank/Agent for payout has paid out and should be marked as processed with the
 details provided.
+
+> Transaction can be processed only once.
 
 + Parameters
     + country_code: `CM` (string, required) - Country code.
