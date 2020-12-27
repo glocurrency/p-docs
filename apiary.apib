@@ -235,7 +235,30 @@ Accept transaction so that the Bank/Agent can pay them out to beneficiaries.
                 "message": "Transaction accepted"
             }
             
-## Process payout transaction. [POST /api/v1/r1/{country_code}/transaction/{transaction_id}/process]
+## Send OTP code to beneficiary. [POST /api/v1/r1/{country_code}/transaction/{transaction_id}/otp]
+Accept transaction so that the Bank/Agent can pay them out to beneficiaries. 
+
+> You have to wait 1 minute before sending next OTP code.
+
++ Parameters
+    + country_code: `CM` (string, required) - Country code.
+    + transaction_id: `GC1234567890` (string, required) - Transaction ID.
+
++ Request (application/json)
+    + Headers
+            
+            Accept: application/json
+            Authorization: Bearer: valid-api-token
+
++ Response 200 (application/json)
+    + Body
+
+            {
+                "status": "SUCCESS",
+                "message": "OTP sent"
+            }
+            
+## Process payout transaction. [POST /api/v1/r1/{country_code}/transaction/{transaction_id}/process?{otp_code}]
 Inform the system that a transaction that was accepted by the Bank/Agent for payout has paid out and should be marked as processed with the
 details provided.
 
@@ -244,6 +267,8 @@ details provided.
 + Parameters
     + country_code: `CM` (string, required) - Country code.
     + transaction_id: `GC1234567890` (string, required) - Transaction ID.
+    + otp_code: `123456` (string, required) - OTP code sent to the beneficiary.
+
 
 + Request (application/json)
     + Headers
